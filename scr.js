@@ -14,10 +14,31 @@
 let userText = document.forms.textForm.userText;
 let displayBlock = document.querySelector('#displayText h1');
 
+let printingIsOver = true;
+
 userText.oninput = () => {
     let newInput = [...userText.value];
     let charToPrint = newInput[newInput.length - 1];
-    setTimeout(() => {
-        displayBlock.innerText += charToPrint;
-    }, Math.random()*1000);
+
+    do
+    {
+        printCharacter(charToPrint)
+            .then(value => { printingIsOver = true; });
+    } while (!printingIsOver);
 }
+
+function printCharacter(char) {
+    return new Promise((resolve, reject) => {
+        if (printingIsOver) {
+            printingIsOver = false;
+
+            setTimeout(() => {
+                displayBlock.innerText += char;
+                resolve();
+            }, Math.random() * 1000);
+        } else {
+            reject();
+        }
+    });
+}
+

@@ -11,34 +11,30 @@
 // l (затримка 0.7)
 // о (затримка 1)
 
-let userText = document.forms.textForm.userText;
-let displayBlock = document.querySelector('#displayText h1');
+const form = document.forms.textForm;
+const userText = document.forms.textForm.userText;
+const displayBlock = document.querySelector('#displayText h1');
+const btn = document.querySelector('#btn');
 
-let printingIsOver = true;
+btn.onclick = async () => {
+    btn.disabled = true;
 
-userText.oninput = () => {
-    let newInput = [...userText.value];
-    let charToPrint = newInput[newInput.length - 1];
+    let newInput = userText.value;
+    let charToPrint;
+    for (const newChar of newInput) {
+        charToPrint = await WaitAndGetChar(newChar);
+        displayBlock.innerText += charToPrint;
+    }
 
-    do
-    {
-        printCharacter(charToPrint)
-            .then(value => { printingIsOver = true; });
-    } while (!printingIsOver);
+    form.reset();
+    btn.disabled = false;
 }
 
-function printCharacter(char) {
-    return new Promise((resolve, reject) => {
-        if (printingIsOver) {
-            printingIsOver = false;
-
-            setTimeout(() => {
-                displayBlock.innerText += char;
-                resolve();
-            }, Math.random() * 1000);
-        } else {
-            reject();
-        }
+function WaitAndGetChar(char) {
+    return new Promise((resolve) => {
+        setTimeout(() => {
+            resolve(char);
+        }, Math.random() * 1000);
     });
 }
 
